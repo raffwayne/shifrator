@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<!-- 
+    Веб-приложение для шифрования и дешифрования текстовых данных
+    Практическая часть экзамена по МКД 04.02
+    Разработчик: студент группы ИСП-324п
+    Дата: 21.09.2026
+-->
+<html lang="ru" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Кроссплатформенное веб-приложение для шифрования и дешифрования текстовых данных">
+    <title>Система криптографической защиты информации | МКД 04.02</title>
+
+    
+    <!-- Подключение локального файла стилей (п. 4.5.5, 4.6.1) -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Шапка приложения с названием и кнопками управления -->
+    <header>
+        <h1>Система криптографической защиты информации</h1>
+        <div class="header-controls">
+            <button class="btn btn-secondary" id="helpBtn" title="Открыть встроенную справку по алгоритмам (п. 4.1.2.27)">
+                Справка
+            </button>
+            <button class="theme-toggle" id="themeToggle" title="Переключить цветовую тему (п. 4.1.2.29)">
+                🌙
+            </button>
+        </div>
+    </header>
+
+    <!-- Основной контейнер приложения -->
+    <main>
+        <!-- Панель управления: выбор режима, алгоритма, ключа -->
+        <section class="controls" aria-label="Панель управления">
+            <div class="form-group">
+                <label for="mode">Режим работы</label>
+                <select id="mode" title="Выберите операцию: шифрование или дешифрование">
+                    <option value="encrypt">Шифрование</option>
+                    <option value="decrypt">Дешифрование</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="algorithm">Алгоритм</label>
+                <select id="algorithm" title="Выберите алгоритм преобразования данных">
+                    <option value="caesar">Шифр Цезаря</option>
+                    <option value="vigenere">Шифр Виженера</option>
+                    <option value="atbash">Шифр Атбаш</option>
+                    <option value="vernam">Шифр Вернама</option>
+                    <option value="rsa">Алгоритм RSA</option>
+                    <option value="des">Алгоритм DES</option>
+                </select>
+            </div>
+
+            <!-- Поле ввода ключа (скрывается для Атбаш, п. 4.1.1.21) -->
+            <div class="form-group" id="keyGroup">
+                <label for="key">Ключ</label>
+                <input type="text" id="key" placeholder="Введите ключ" title="Формат ключа зависит от выбранного алгоритма">
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" id="convertBtn" title="Выполнить преобразование (п. 4.1.1.22)">
+                    Преобразовать
+                </button>
+                <button class="btn btn-secondary" id="clearBtn" title="Очистить все поля (п. 4.1.1.25)">
+                    Очистить
+                </button>
+            </div>
+        </section>
+
+        <!-- Панель ввода текста / загрузки файла -->
+        <section class="panel input-panel">
+            <label for="inputText">Исходный текст / Файл</label>
+            <textarea id="inputText" placeholder="Введите текст для обработки или загрузите файл..." 
+                      title="Поддерживается ввод текста вручную, вставка из буфера (Ctrl+V) и загрузка файлов .txt, .docx"></textarea>
+            <div class="file-upload">
+                <input type="file" id="fileInput" accept=".txt,.docx" title="Загрузить файл .txt или .docx (п. 4.1.1.16)">
+                <span id="fileName" class="file-name">Файл не выбран</span>
+            </div>
+        </section>
+
+        <!-- Панель вывода результата -->
+        <section class="panel output-panel">
+            <label for="outputText">Результат</label>
+            <textarea id="outputText" placeholder="Здесь появится результат преобразования..." readonly 
+                      title="Результат можно скопировать или скачать"></textarea>
+            <div class="output-actions">
+                <button class="btn btn-secondary" id="copyBtn" title="Копировать результат в буфер обмена (п. 4.1.1.24)">
+                    📋 Копировать
+                </button>
+                <button class="btn btn-secondary" id="downloadBtn" title="Скачать результат в .txt (п. 4.1.1.26)">
+                    💾 Скачать .txt
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Контейнер для Toast-уведомлений (п. 4.1.2.32) -->
+    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+    <!-- Модальное окно встроенной справки (п. 4.1.2.27) -->
+    <div class="modal" id="helpModal" role="dialog" aria-labelledby="helpTitle">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal" title="Закрыть">&times;</span>
+            <h2 id="helpTitle">Справка по алгоритмам</h2>
+            <ul class="help-list">
+                <li><b>Шифр Цезаря:</b> Ключ — целое число (сдвиг). Например, 3.</li>
+                <li><b>Шифр Виженера:</b> Ключ — слово из букв русского или английского алфавита.</li>
+                <li><b>Шифр Атбаш:</b> Ключ не требуется (зеркальная подстановка алфавита).</li>
+                <li><b>Шифр Вернама:</b> Ключ — строка, равная или длиннее текста (операция XOR).</li>
+                <li><b>Алгоритм RSA:</b> Асимметричный алгоритм. Ключ — два простых числа через запятую (например, 11, 23).</li>
+                <li><b>Алгоритм DES:</b> Симметричный блочный шифр. Ключ — строка (56 бит).</li>
+            </ul>
+            <div class="help-legal">
+                <p><b>Юридическая информация:</b></p>
+                <p>Программа работает исключительно локально (Client-side processing). 
+                   Данные не передаются по сети. Соответствует 152-ФЗ «О персональных данных». 
+                   Предназначена только для учебных целей и не сертифицирована ФСБ России.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключение локальных библиотек (п. 4.5.6, 4.8.5) -->
+    <!-- Все библиотеки должны находиться в папке libs/ локально -->
+    <script src="libs/mammoth.min.js" 
+            onerror="console.warn('mammoth.min.js не найден локально. Обработка .docx будет недоступна.')"></script>
+    <script src="libs/crypto-js.min.js" 
+            onerror="console.warn('crypto-js.min.js не найден. DES будет недоступен.')"></script>
+    <script src="libs/FileSaver.min.js" 
+            onerror="console.warn('FileSaver.min.js не найден. Используется нативный механизм скачивания.')"></script>
+    
+    <!-- Подключение локального файла с логикой приложения -->
+    <script src="app.js"></script>
+</body>
+</html>
