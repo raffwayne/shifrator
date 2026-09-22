@@ -221,7 +221,7 @@ function caesarCipher(text, shift, decrypt = false) {
     if (decrypt) shift = -shift;
     return text.split('').map(ch => {
         const alpha = getAlphabet(ch);
-        if (!alpha) return ch; // Неалфавитные символы сохраняются (п. 4.1.3)
+        if (!alpha) return ch; // Неалфавитные символы сохраняются 
         const isLower = ch === ch.toLowerCase();
         const idx = alpha.indexOf(ch.toUpperCase());
         if (idx === -1) return ch;
