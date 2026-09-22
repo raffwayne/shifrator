@@ -1,16 +1,8 @@
-/* ==========================================================================
-   Логика веб-приложения для шифрования и дешифрования текстовых данных
-   Язык реализации: JavaScript ES6+
-   Соответствие ТЗ: п. 4.5.5, 4.5.6, 4.1.1, 4.1.2
-   
-   Все операции выполняются локально (Client-side processing, п. 4.5.7).
-   Сетевые запросы отсутствуют. Соответствует 152-ФЗ.
-   ========================================================================== */
 
 'use strict';
 
 // ============================================================================
-// 1. УПРАВЛЕНИЕ ЦВЕТОВОЙ ТЕМОЙ (п. 4.1.2.29)
+// 1. УПРАВЛЕНИЕ ЦВЕТОВОЙ ТЕМОЙ 
 // Сохранение выбора пользователя в localStorage
 // ============================================================================
 const themeToggle = document.getElementById('themeToggle');
@@ -32,7 +24,7 @@ themeToggle.addEventListener('click', () => {
 });
 
 // ============================================================================
-// 2. TOAST-УВЕДОМЛЕНИЯ (п. 4.1.2.32)
+// 2. TOAST-УВЕДОМЛЕНИЯ 
 // Информативные сообщения без аварийного завершения работы
 // ============================================================================
 function showToast(message, type = 'info') {
@@ -50,7 +42,7 @@ function showToast(message, type = 'info') {
 }
 
 // ============================================================================
-// 3. ДИНАМИЧЕСКОЕ УПРАВЛЕНИЕ ПОЛЕМ КЛЮЧА (п. 4.1.1.21)
+// 3. ДИНАМИЧЕСКОЕ УПРАВЛЕНИЕ ПОЛЕМ КЛЮЧА 
 // Скрытие/отображение поля в зависимости от алгоритма
 // ============================================================================
 const algorithmSelect = document.getElementById('algorithm');
@@ -60,7 +52,7 @@ const keyInput = document.getElementById('key');
 algorithmSelect.addEventListener('change', () => {
     const algo = algorithmSelect.value;
     if (algo === 'atbash') {
-        // Для шифра Атбаш ключ не требуется (п. 4.1.3.1.c)
+        // Для шифра Атбаш ключ не требуется 
         keyGroup.style.display = 'none';
         keyInput.value = '';
     } else {
@@ -83,15 +75,13 @@ function getPlaceholder(algo) {
 }
 
 // ============================================================================
-// 4. ОБРАБОТКА ФАЙЛОВ (п. 4.1.1.16, 4.1.1.17)
-// Оптимизировано для больших файлов (до 5 МБ согласно п. 4.1.4.34)
+// 4. ОБРАБОТКА ФАЙЛОВ 
 // ============================================================================
 const fileInput = document.getElementById('fileInput');
 const inputText = document.getElementById('inputText');
 const fileNameSpan = document.getElementById('fileName');
 let currentFileName = '';
 
-// Максимальный рекомендуемый размер файла (5 МБ по ТЗ)
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 fileInput.addEventListener('change', async (e) => {
@@ -112,12 +102,12 @@ fileInput.addEventListener('change', async (e) => {
     // Показываем индикатор загрузки
     showToast(`📂 Чтение файла: ${file.name}...`, 'info');
     
-    // Даём браузеру отрисовать UI перед тяжёлой операцией
+    // Даём браузеру отрисовать UI перед операцией
     await new Promise(resolve => setTimeout(resolve, 50));
 
     try {
         if (file.name.toLowerCase().endsWith('.txt')) {
-            // Чтение через FileReader с явным указанием UTF-8
+            // Чтение через FileReader 
             const text = await readFileAsText(file);
             inputText.value = text;
             
@@ -144,7 +134,7 @@ fileInput.addEventListener('change', async (e) => {
     }
 });
 
-// Вспомогательная функция: чтение файла как текста с явной кодировкой UTF-8
+// Вспомогательная функция: чтение файла как текста 
 function readFileAsText(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -164,7 +154,7 @@ function readFileAsText(file) {
             reject(new Error('Не удалось прочитать файл'));
         };
         
-        // Явно указываем кодировку UTF-8 (п. 4.5.1)
+        // Явно указываем кодировку UTF-8 
         reader.readAsText(file, 'UTF-8');
     });
 }
@@ -177,7 +167,7 @@ function formatFileSize(bytes) {
 }
 
 // ============================================================================
-// 4.1. ПОДДЕРЖКА DRAG-AND-DROP (удобно для больших файлов)
+// 4.1. ПОДДЕРЖКА DRAG-AND-DROP 
 // ============================================================================
 const inputPanel = document.querySelector('.input-panel');
 
@@ -207,12 +197,12 @@ inputPanel.addEventListener('drop', (e) => {
 });
 
 // ============================================================================
-// 5. КРИПТОГРАФИЧЕСКИЕ АЛГОРИТМЫ (п. 4.1.1.19)
+// 5. КРИПТОГРАФИЧЕСКИЕ АЛГОРИТМЫ 
 // Реализация 7 алгоритмов: Цезарь, Виженер, Атбаш, Плейфер, Вернам, RSA, DES
-// Поддержка кириллицы и латиницы в UTF-8 (п. 4.1.3)
+// Поддержка кириллицы и латиницы 
 // ============================================================================
 
-// --- Вспомогательные функции для работы с алфавитами ---
+//Вспомогательные функции для работы с алфавитами
 function isRussian(ch) { return /[а-яё]/i.test(ch); }
 function isEnglish(ch) { return /[a-z]/i.test(ch); }
 
@@ -224,7 +214,7 @@ function getAlphabet(ch) {
 }
 
 // ----------------------------------------------------------------------------
-// 5.1. ШИФР ЦЕЗАРЯ (п. 4.1.3.1.a)
+// 5.1. ШИФР ЦЕЗАРЯ 
 // Ключ: целое число (сдвиг)
 // ----------------------------------------------------------------------------
 function caesarCipher(text, shift, decrypt = false) {
@@ -242,7 +232,7 @@ function caesarCipher(text, shift, decrypt = false) {
 }
 
 // ----------------------------------------------------------------------------
-// 5.2. ШИФР ВИЖЕНЕРА (п. 4.1.3.1.b)
+// 5.2. ШИФР ВИЖЕНЕРА 
 // Ключ: строка букв русского или английского алфавита
 // ----------------------------------------------------------------------------
 function vigenereCipher(text, key, decrypt = false) {
@@ -268,7 +258,7 @@ function vigenereCipher(text, key, decrypt = false) {
 }
 
 // ----------------------------------------------------------------------------
-// 5.3. ШИФР АТБАШ (п. 4.1.3.1.c)
+// 5.3. ШИФР АТБАШ 
 // Ключ не требуется. Зеркальная подстановка.
 // ----------------------------------------------------------------------------
 function atbashCipher(text) {
@@ -285,9 +275,9 @@ function atbashCipher(text) {
 
 
 // ----------------------------------------------------------------------------
-// 5.4. ШИФР ВЕРНАМА (п. 4.1.3.1.e)
+// 5.4. ШИФР ВЕРНАМА 
 // Ключ: строка, равная или длиннее текста. Операция XOR.
-// Результат шифрования — Base64 (п. 4.5.6)
+// Результат шифрования — Base64
 // ----------------------------------------------------------------------------
 function vernamCipher(text, key, decrypt = false) {
     if (!key) return text;
@@ -331,9 +321,8 @@ function vernamCipher(text, key, decrypt = false) {
 }
 
 // ----------------------------------------------------------------------------
-// 5.5. АЛГОРИТМ RSA (п. 4.1.3.1.f)
+// 5.5. АЛГОРИТМ RSA
 // Учебная реализация на BigInt. Ключ: два простых числа через запятую.
-// Поддержка кириллицы через шифрование по одному символу (UTF-16 код)
 // Для кириллицы рекомендуются p=37, q=31 (n=1147 > 1103)
 // Для латиницы рекомендуются p=13, q=11 (n=143 > 122)
 // ----------------------------------------------------------------------------
@@ -386,7 +375,7 @@ function rsaCipher(text, keyStr, decrypt = false) {
         
         let d = modInverse(e, phi);
         
-        // Возведение в степень по модулю (быстрый алгоритм)
+        // Возведение в степень по модулю 
         function modPow(base, exp, mod) {
             let result = 1n;
             base = base % mod;
@@ -420,7 +409,7 @@ function rsaCipher(text, keyStr, decrypt = false) {
             return encrypted.join(' ');
         } else {
             // ДЕШИФРОВАНИЕ
-            // Разбиваем зашифрованный текст на блоки (числа через пробел)
+            // Разбиваем зашифрованный текст на блоки 
             let blocks = text.trim().split(/\s+/);
             let decrypted = "";
             
@@ -449,8 +438,8 @@ function rsaCipher(text, keyStr, decrypt = false) {
 }
 
 // ----------------------------------------------------------------------------
-// 5.6. АЛГОРИТМ DES (п. 4.1.3.1.g)
-// Использует библиотеку crypto-js (п. 4.5.6)
+// 5.6. АЛГОРИТМ DES
+// Использует библиотеку crypto-js
 // ----------------------------------------------------------------------------
 function desCipher(text, key, decrypt = false) {
     if (typeof CryptoJS === 'undefined') {
@@ -483,7 +472,7 @@ function desCipher(text, key, decrypt = false) {
 }
 
 // ============================================================================
-// 6. ГЛАВНЫЙ ОБРАБОТЧИК ПРЕОБРАЗОВАНИЯ (п. 4.1.1.22)
+// 6. ГЛАВНЫЙ ОБРАБОТЧИК ПРЕОБРАЗОВАНИЯ 
 // ============================================================================
 document.getElementById('convertBtn').addEventListener('click', () => {
     const text = inputText.value;
@@ -492,7 +481,7 @@ document.getElementById('convertBtn').addEventListener('click', () => {
     const key = keyInput.value;
     const isDecrypt = mode === 'decrypt';
 
-    // Валидация входных данных (п. 4.1.2.31, 4.2.1)
+    // Валидация входных данных 
     if (!text) {
         showToast('Поле ввода текста пустое', 'error');
         return;
@@ -522,7 +511,7 @@ document.getElementById('convertBtn').addEventListener('click', () => {
         document.getElementById('outputText').value = result;
         showToast('Операция успешно завершена', 'success');
     } catch (e) {
-        // Обработка исключений без аварийного завершения (п. 4.2.2)
+        // Обработка исключений без аварийного завершения 
         showToast('Ошибка при обработке: ' + e.message, 'error');
     }
 });
@@ -531,7 +520,7 @@ document.getElementById('convertBtn').addEventListener('click', () => {
 // 7. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (очистка, копирование, скачивание)
 // ============================================================================
 
-// Очистка всех полей (п. 4.1.1.25)
+// Очистка всех полей 
 document.getElementById('clearBtn').addEventListener('click', () => {
     inputText.value = '';
     document.getElementById('outputText').value = '';
@@ -541,7 +530,7 @@ document.getElementById('clearBtn').addEventListener('click', () => {
     showToast('Все поля очищены', 'info');
 });
 
-// Копирование результата в буфер обмена (п. 4.1.1.24, Clipboard API)
+// Копирование результата в буфер обмена 
 document.getElementById('copyBtn').addEventListener('click', async () => {
     const out = document.getElementById('outputText').value;
     if (!out) {
@@ -556,7 +545,7 @@ document.getElementById('copyBtn').addEventListener('click', async () => {
     }
 });
 
-// Скачивание результата в .txt (п. 4.1.1.26)
+// Скачивание результата в .txt 
 document.getElementById('downloadBtn').addEventListener('click', () => {
     const out = document.getElementById('outputText').value;
     if (!out) {
@@ -587,7 +576,7 @@ document.getElementById('downloadBtn').addEventListener('click', () => {
 });
 
 // ============================================================================
-// 8. МОДАЛЬНОЕ ОКНО СПРАВКИ (п. 4.1.2.27)
+// 8. МОДАЛЬНОЕ ОКНО СПРАВКИ 
 // ============================================================================
 const helpModal = document.getElementById('helpModal');
 document.getElementById('helpBtn').addEventListener('click', () => {
@@ -608,7 +597,7 @@ window.addEventListener('keydown', (e) => {
 });
 
 // ============================================================================
-// 9. ГОРЯЧИЕ КЛАВИШИ (п. 4.1.2.30)
+// 9. ГОРЯЧИЕ КЛАВИШИ 
 // Ctrl+C, Ctrl+V, Ctrl+A работают стандартно во всех textarea
 // Дополнительно: Ctrl+Enter для запуска преобразования
 // ============================================================================
