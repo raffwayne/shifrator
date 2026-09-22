@@ -1,10 +1,5 @@
 <!DOCTYPE html>
-<!-- 
-    Веб-приложение для шифрования и дешифрования текстовых данных
-    Практическая часть экзамена по МКД 04.02
-    Разработчик: студент группы ИСП-324п
-    Дата: 21.09.2026
--->
+
 <html lang="ru" data-theme="light">
 <head>
     <meta charset="UTF-8">
@@ -13,7 +8,7 @@
     <title>Система криптографической защиты информации | МКД 04.02</title>
 
     
-    <!-- Подключение локального файла стилей (п. 4.5.5, 4.6.1) -->
+    <!-- Подключение локального файла стилей  -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -55,7 +50,7 @@
                 </select>
             </div>
 
-            <!-- Поле ввода ключа (скрывается для Атбаш, п. 4.1.1.21) -->
+            <!-- Поле ввода ключа (скрывается для Атба) -->
             <div class="form-group" id="keyGroup">
                 <label for="key">Ключ</label>
                 <input type="text" id="key" placeholder="Введите ключ" title="Формат ключа зависит от выбранного алгоритма">
@@ -98,10 +93,10 @@
         </section>
     </main>
 
-    <!-- Контейнер для Toast-уведомлений (п. 4.1.2.32) -->
+    <!-- Контейнер для Toast-уведомлений  -->
     <div class="toast-container" id="toastContainer" aria-live="polite"></div>
 
-    <!-- Модальное окно встроенной справки (п. 4.1.2.27) -->
+    <!-- Модальное окно встроенной справки -->
     <div class="modal" id="helpModal" role="dialog" aria-labelledby="helpTitle">
         <div class="modal-content">
             <span class="close-modal" id="closeModal" title="Закрыть">&times;</span>
@@ -123,7 +118,7 @@
         </div>
     </div>
 
-    <!-- Подключение локальных библиотек (п. 4.5.6, 4.8.5) -->
+    <!-- Подключение локальных библиотек -->
     <!-- Все библиотеки должны находиться в папке libs/ локально -->
     <script src="libs/mammoth.min.js" 
             onerror="console.warn('mammoth.min.js не найден локально. Обработка .docx будет недоступна.')"></script>
